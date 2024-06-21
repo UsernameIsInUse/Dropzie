@@ -5,7 +5,7 @@ $.fn.dropzie = function(settingsOverrides){
 
         var settings = $.extend({
             // this is the list of all available options and their defaults
-            'search': true,
+            'search': false,
             'tagMode': false, // shows the selected options in the toggle as tags - custom toggles not supported
             'hideFirstOptionFromList': true, // use this if your first option is 'Select...' or similar
             'customToggle': null // css selector for a custom trigger/button you'd like to use to open the menu – if set the standard trigger will be hidden
@@ -32,11 +32,19 @@ $.fn.dropzie = function(settingsOverrides){
         $(rootMenu).find('option').each(function(i){
             var selected = false;
             if ( $(this).attr('selected') ) var selected = true;
+            // Collect all data attributes
+            var dataAttrs = {};
+            $.each(this.attributes, function() {
+                if (this.name.startsWith('data-')) {
+                    dataAttrs[this.name] = this.value;
+                }
+            });
             options.push({
                 'label': $(this).html(),
                 'value': $(this).attr('value'),
                 'html': $(this).attr('data-html'),
-                'selected': selected
+                'selected': selected,
+                'dataAttrs': dataAttrs // Store data attributes
             });
         });
 
@@ -76,8 +84,14 @@ $.fn.dropzie = function(settingsOverrides){
                } else {
                    var label = opt['label'];
                }
-               $(drList).append('<div class="dropzieOption" data-value="'+opt['value']+'" data-selected="'+opt['selected']+'" data-label="'+opt['label']+'">'+label+'</div>');
-           }
+               // Create the dropzieOption with data attributes
+               var dropzieOption = $('<div class="dropzieOption" data-value="'+opt['value']+'" data-selected="'+opt['selected']+'" data-label="'+opt['label']+'">'+label+'</div>');
+               $.each(opt.dataAttrs, function(key, value) {
+                   dropzieOption.attr(key, value);
+               });
+
+               $(drList).append(dropzieOption);
+           };
         });
         if ( settings.search ) {
             $(dr).append('<div class="dropzieMenu"><input type="text" class="dropzieSearch" placeholder="Search" />'+$(drList).html()+'</div>');
