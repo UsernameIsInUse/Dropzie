@@ -5,7 +5,7 @@ $.fn.dropzie = function(settingsOverrides){
 
         var settings = $.extend({
             // this is the list of all available options and their defaults
-            'search': false,
+            'search': True,
             'tagMode': false, // shows the selected options in the toggle as tags - custom toggles not supported
             'hideFirstOptionFromList': true, // use this if your first option is 'Select...' or similar
             'customToggle': null // css selector for a custom trigger/button you'd like to use to open the menu – if set the standard trigger will be hidden
